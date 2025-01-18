@@ -93,6 +93,12 @@ https://docs.docker.com/compose/how-tos/networking/
 
 By default Compose sets up a single network for your app. Each container for a service joins the default network and is both reachable by other containers on that network, and discoverable by the service's name.
 
+> Command
+
+```bash
+docker-compose up
+```
+
 > Screenshot
 
 ![pgAdmin](images/pgadmin.png "pgAdmin")
@@ -124,6 +130,27 @@ Download this data and put it into Postgres.
 You can use the code from the course. It's up to you whether
 you want to use Jupyter or a python script.
 
+> Command
+
+```bash
+docker-compose -f docker-compose-q3.yaml up
+
+docker build -t taxi_ingest:v001 .
+
+URL="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-10.csv.gz"
+
+winpty docker run -it \
+  --network=01-docker-terraform_default \
+  taxi_ingest:v001 \
+    --user=root \
+    --password=root \
+    --host=01-docker-terraform-pgdatabase-1 \
+    --port=5432 \
+    --db=ny_taxi \
+    --table_name=green_taxi_trips \
+    --url=${URL}
+```
+
 ## Question 3. Trip Segmentation Count
 
 During the period of October 1st 2019 (inclusive) and November 1st 2019 (exclusive), how many trips, **respectively**, happened:
@@ -141,6 +168,42 @@ Answers:
 - 104,793;  202,661;  109,603;  27,678;  35,189
 - 104,838;  199,013;  109,645;  27,688;  35,202
 
+> Query
+
+```sql
+-- Up to 1 mile
+SELECT COUNT(1) FROM green_taxi_trips
+WHERE trip_distance <= 1.0
+AND lpep_pickup_datetime >= '2019-10-01'
+AND lpep_dropoff_datetime < '2019-11-01';
+-- In between 1 (exclusive) and 3 miles (inclusive)
+SELECT COUNT(1) FROM green_taxi_trips
+WHERE trip_distance > 1.0 AND trip_distance <= 3.0
+AND lpep_pickup_datetime >= '2019-10-01'
+AND lpep_dropoff_datetime < '2019-11-01';
+-- In between 3 (exclusive) and 7 miles (inclusive)
+SELECT COUNT(1) FROM green_taxi_trips
+WHERE trip_distance > 3.0 AND trip_distance <= 7.0
+AND lpep_pickup_datetime >= '2019-10-01'
+AND lpep_dropoff_datetime < '2019-11-01';
+-- In between 7 (exclusive) and 10 miles (inclusive)
+SELECT COUNT(1) FROM green_taxi_trips
+WHERE trip_distance > 7.0 AND trip_distance <= 10.0
+AND lpep_pickup_datetime >= '2019-10-01'
+AND lpep_dropoff_datetime < '2019-11-01';
+-- Over 10 miles
+SELECT COUNT(1) FROM green_taxi_trips
+WHERE trip_distance > 10.0
+AND lpep_pickup_datetime >= '2019-10-01'
+AND lpep_dropoff_datetime < '2019-11-01';
+```
+
+> Answer
+
+```
+104,802; 198,924; 109,603; 27,678; 35,189
+```
+
 
 ## Question 4. Longest trip for each day
 
@@ -154,6 +217,25 @@ Tip: For every day, we only care about one single trip with the longest distance
 - 2019-10-26
 - 2019-10-31
 
+> Query
+
+```sql
+SELECT trip_distance, lpep_pickup_datetime
+FROM green_taxi_trips
+WHERE trip_distance=(SELECT MAX(trip_distance) FROM green_taxi_trips);
+
+SELECT trip_distance, lpep_pickup_datetime
+FROM green_taxi_trips
+ORDER BY trip_distance DESC
+LIMIT 1;
+```
+
+> Answer
+
+```
+2019-10-31
+```
+
 
 ## Question 5. Three biggest pickup zones
 
@@ -166,6 +248,23 @@ Consider only `lpep_pickup_datetime` when filtering by date.
 - East Harlem North, Morningside Heights
 - Morningside Heights, Astoria Park, East Harlem South
 - Bedford, East Harlem North, Astoria Park
+
+> Query
+
+```sql
+SELECT SUM(total_amount), "Zone"
+FROM green_taxi_trips trips
+LEFT JOIN zones
+ON trips."PULocationID" = zones."LocationID"
+WHERE TO_CHAR(lpep_pickup_datetime, 'yyyy-mm-dd') = '2019-10-18'
+GROUP BY "Zone" ORDER BY SUM(total_amount) DESC;
+```
+
+> Answer
+
+```
+East Harlem North, East Harlem South, Morningside Heights
+```
 
 
 ## Question 6. Largest tip
@@ -183,6 +282,27 @@ We need the name of the zone, not the ID.
 - East Harlem North
 - East Harlem South
 
+> Query
+
+```sql
+SELECT MAX(tip_amount), zones_do."Zone"
+FROM green_taxi_trips trips
+LEFT JOIN zones zones_pu
+ON trips."PULocationID" = zones_pu."LocationID"
+LEFT JOIN zones zones_do
+ON trips."DOLocationID" = zones_do."LocationID"
+WHERE TO_CHAR(lpep_pickup_datetime, 'yyyy-mm') = '2019-10'
+AND zones_pu."Zone" = 'East Harlem North'
+GROUP BY zones_do."Zone" ORDER BY MAX(tip_amount) DESC
+LIMIT 1;
+```
+
+> Answer
+
+```
+JFK Airport
+```
+
 
 ## Terraform
 
@@ -190,7 +310,7 @@ In this section homework we'll prepare the environment by creating resources in 
 
 In your VM on GCP/Laptop/GitHub Codespace install Terraform. 
 Copy the files from the course repo
-[here](../../../01-docker-terraform/1_terraform_gcp/terraform) to your VM/Laptop/GitHub Codespace.
+[here](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main/01-docker-terraform/1_terraform_gcp/terraform) to your VM/Laptop/GitHub Codespace.
 
 Modify the files as necessary to create a GCP Bucket and Big Query Dataset.
 
