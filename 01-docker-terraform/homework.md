@@ -329,6 +329,17 @@ Answers:
 - terraform init, terraform apply -auto-approve, terraform destroy
 - terraform import, terraform apply -y, terraform rm
 
+> Note
+
+https://developer.hashicorp.com/terraform/cli/commands/apply
+
+![Terraform](images/terraform.png "Terraform")
+
+> Answer
+
+```
+terraform init, terraform apply -auto-approve, terraform destroy
+```
 
 ## Submitting the solutions
 
