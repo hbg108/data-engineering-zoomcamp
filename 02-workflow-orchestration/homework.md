@@ -32,11 +32,27 @@ Complete the Quiz shown below. It’s a set of 6 multiple-choice questions to te
 - 364.7 MB
 - 692.6 MB
 
+> Screenshot
+
+![yellow_tripdata_2020-12.csv](images/yellow_tripdata_2020-12.png)
+
+> Answer
+
+```
+128.3 MB
+```
+
 2) What is the rendered value of the variable `file` when the inputs `taxi` is set to `green`, `year` is set to `2020`, and `month` is set to `04` during execution?
 - `{{inputs.taxi}}_tripdata_{{inputs.year}}-{{inputs.month}}.csv` 
 - `green_tripdata_2020-04.csv`
 - `green_tripdata_04_2020.csv`
 - `green_tripdata_2020.csv`
+
+> Answer
+
+```
+green_tripdata_2020-04.csv
+```
 
 3) How many rows are there for the `Yellow` Taxi data for all CSV files in the year 2020?
 - 13,537.299
@@ -44,11 +60,37 @@ Complete the Quiz shown below. It’s a set of 6 multiple-choice questions to te
 - 18,324,219
 - 29,430,127
 
+> Query
+
+```sql
+SELECT COUNT(1) FROM `de-zc-hbg.de_zoomcamp.yellow_tripdata`
+WHERE CONTAINS_SUBSTR(filename, '2020') is TRUE;
+```
+
+> Answer
+
+```
+24,648,499
+```
+
 4) How many rows are there for the `Green` Taxi data for all CSV files in the year 2020?
 - 5,327,301
 - 936,199
 - 1,734,051
 - 1,342,034
+
+> Query
+
+```sql
+SELECT COUNT(1) FROM `de-zc-hbg.de_zoomcamp.green_tripdata`
+WHERE CONTAINS_SUBSTR(filename, '2020') is TRUE;
+```
+
+> Answer
+
+```
+1,734,051
+```
 
 5) How many rows are there for the `Yellow` Taxi data for the March 2021 CSV file?
 - 1,428,092
@@ -56,12 +98,38 @@ Complete the Quiz shown below. It’s a set of 6 multiple-choice questions to te
 - 1,925,152
 - 2,561,031
 
+```sql
+SELECT COUNT(1) FROM `de-zc-hbg.de_zoomcamp.yellow_tripdata`
+WHERE filename = 'yellow_tripdata_2021-03.csv';
+```
+
+> Answer
+
+```
+1,925,152
+```
+
 6) How would you configure the timezone to New York in a Schedule trigger?
 - Add a `timezone` property set to `EST` in the `Schedule` trigger configuration  
 - Add a `timezone` property set to `America/New_York` in the `Schedule` trigger configuration
 - Add a `timezone` property set to `UTC-5` in the `Schedule` trigger configuration
 - Add a `location` property set to `New_York` in the `Schedule` trigger configuration  
 
+> Note
+
+https://kestra.io/plugins/core/triggers/io.kestra.plugin.core.trigger.schedule
+
+By default, all schedules will use UTC. If you need a different timezone, add the `timezone` property to your trigger definition.
+
+The [time zone identifier](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) (i.e. the second column in [the Wikipedia table](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)) to use for evaluating the cron expression. Default value is the server default zone ID.
+
+![TZ identifier America/New_York](images/tz_identifier.png)
+
+> Answer
+
+```
+Add a timezone property set to America/New_York in the Schedule trigger configuration
+```
 
 ## Submitting the solutions
 
