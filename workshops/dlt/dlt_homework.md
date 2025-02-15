@@ -41,6 +41,12 @@ print("dlt version:", dlt.__version__)
 
 Provide the **version** you see in the output.
 
+> Answer
+
+```
+1.6.1
+```
+
 ## **Question 2: Define & Run the Pipeline (NYC Taxi API)**
 
 Use dlt to extract all pages of data from the API.
@@ -60,7 +66,18 @@ from dlt.sources.helpers.rest_client.paginators import PageNumberPaginator
 
 
 # your code is here
+@dlt.resource(name="rides")
+def ny_taxi():
+    client = RESTClient(
+        base_url="https://us-central1-dlthub-analytics.cloudfunctions.net",
+        paginator=PageNumberPaginator(
+            base_page=1,
+            total_path=None
+        )
+    )
 
+    for page in client.paginate("data_engineering_zoomcamp_api"):
+        yield page
 
 pipeline = dlt.pipeline(
     pipeline_name="ny_taxi_pipeline",
@@ -101,6 +118,12 @@ How many tables were created?
 * 6
 * 8
 
+> Answer
+
+```
+4
+```
+
 ## **Question 3: Explore the loaded data**
 
 Inspect the table `ride`:
@@ -116,6 +139,12 @@ What is the total number of records extracted?
 * 5000
 * 7500
 * 10000
+
+> Answer
+
+```
+10000
+```
 
 ## **Question 4: Trip Duration Analysis**
 
@@ -142,6 +171,12 @@ What is the average trip duration?
 * 22.3049
 * 32.3049
 * 42.3049
+
+> Answer
+
+```
+12.3049
+```
 
 ## **Submitting the solutions**
 

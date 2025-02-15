@@ -3,6 +3,7 @@ ny_taxi_postgres_data/
 *.csv.gz
 *.json
 *.parquet
+*.duckdb
 # Local .terraform directories
 **/.terraform/*
 
