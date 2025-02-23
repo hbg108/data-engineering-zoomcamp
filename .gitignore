@@ -4,6 +4,8 @@ ny_taxi_postgres_data/
 *.json
 *.parquet
 *.duckdb
+*.crc
+_SUCCESS
 # Local .terraform directories
 **/.terraform/*
 
