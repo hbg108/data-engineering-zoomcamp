@@ -52,7 +52,7 @@ from {{ source('raw_nyc_tripdata', 'ext_green_taxi' ) }}
 
 > Note
 
-https://docs.getdbt.com/reference/dbt-jinja-functions/source
+https://docs.getdbt.com/reference/dbt-jinja-functions/source  
 https://docs.getdbt.com/reference/dbt-jinja-functions/env_var
 
 > Screenshot
@@ -88,8 +88,8 @@ What would you change to accomplish that in a such way that command line argumen
 
 > Note
 
-https://docs.getdbt.com/reference/dbt-jinja-functions/ref
-https://docs.getdbt.com/docs/build/project-variables
+https://docs.getdbt.com/reference/dbt-jinja-functions/ref  
+https://docs.getdbt.com/docs/build/project-variables  
 https://docs.getdbt.com/reference/dbt-jinja-functions/var
 
 > Answer
