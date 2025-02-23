@@ -50,6 +50,20 @@ from {{ source('raw_nyc_tripdata', 'ext_green_taxi' ) }}
 - `select * from myproject.my_nyc_tripdata.ext_green_taxi`
 - `select * from dtc_zoomcamp_2025.raw_nyc_tripdata.green_taxi`
 
+> Note
+
+https://docs.getdbt.com/reference/dbt-jinja-functions/source
+https://docs.getdbt.com/reference/dbt-jinja-functions/env_var
+
+> Screenshot
+
+![Compiled SQL](images/homework_q1.png)
+
+> Answer
+
+```sql
+select * from myproject.raw_nyc_tripdata.ext_green_taxi
+```
 
 ### Question 2: dbt Variables & Dynamic Models
 
@@ -72,12 +86,21 @@ What would you change to accomplish that in a such way that command line argumen
 - Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", env_var("DAYS_BACK", "30")) }}' DAY`
 - Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ env_var("DAYS_BACK", var("days_back", "30")) }}' DAY`
 
+> Note
+
+https://docs.getdbt.com/reference/dbt-jinja-functions/ref
+https://docs.getdbt.com/docs/build/project-variables
+https://docs.getdbt.com/reference/dbt-jinja-functions/var
+
+> Answer
+
+- Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", env_var("DAYS_BACK", "30")) }}' DAY`
 
 ### Question 3: dbt Data Lineage and Execution
 
 Considering the data lineage below **and** that taxi_zone_lookup is the **only** materialization build (from a .csv seed file):
 
-![image](./homework_q2.png)
+![image](images/homework_q2.png)
 
 Select the option that does **NOT** apply for materializing `fct_taxi_monthly_zone_revenue`:
 
@@ -87,6 +110,15 @@ Select the option that does **NOT** apply for materializing `fct_taxi_monthly_zo
 - `dbt run --select +models/core/`
 - `dbt run --select models/staging/+`
 
+> Note
+
+"dbt run --select models/staging/+" will not run the dim_zone_lookup node, which is one of the dependencies of fct_taxi_monthly_zone_revenue.
+
+> Answer
+
+```
+dbt run --select models/staging/+
+```
 
 ### Question 4: dbt Macros and Jinja
 
@@ -125,6 +157,12 @@ That all being said, regarding macro above, **select all statements that are tru
 - When using `stg`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
 - When using `staging`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
 
+> Answer
+
+- Setting a value for  `DBT_BIGQUERY_TARGET_DATASET` env var is mandatory, or it'll fail to compile
+- When using `core`, it materializes in the dataset defined in `DBT_BIGQUERY_TARGET_DATASET`
+- When using `stg`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
+- When using `staging`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
 
 ## Serious SQL
 
@@ -152,6 +190,21 @@ Considering the YoY Growth in 2020, which were the yearly quarters with the best
 - green: {best: 2020/Q1, worst: 2020/Q2}, yellow: {best: 2020/Q1, worst: 2020/Q2}
 - green: {best: 2020/Q1, worst: 2020/Q2}, yellow: {best: 2020/Q3, worst: 2020/Q4}
 
+> Screenshot
+
+Green Taxi
+
+![green](images/green.png)
+
+Yellow Taxi
+
+![yellow](images/yellow.png)
+
+> Answer
+
+```
+green: {best: 2020/Q1, worst: 2020/Q2}, yellow: {best: 2020/Q1, worst: 2020/Q2}
+```
 
 ### Question 6: P97/P95/P90 Taxi Monthly Fare
 
@@ -167,12 +220,27 @@ Now, what are the values of `p97`, `p95`, `p90` for Green Taxi and Yellow Taxi, 
 - green: {p97: 40.0, p95: 33.0, p90: 24.5}, yellow: {p97: 31.5, p95: 25.5, p90: 19.0}
 - green: {p97: 55.0, p95: 45.0, p90: 26.5}, yellow: {p97: 52.0, p95: 25.5, p90: 19.0}
 
+> Screenshot
+
+Green Taxi
+
+![Green Percentile](images/green_percentile.png)
+
+Yellow Taxi
+
+![Yellow Percentile](images/yellow_percentile.png)
+
+> Answer
+
+```
+green: {p97: 55.0, p95: 45.0, p90: 26.5}, yellow: {p97: 31.5, p95: 25.5, p90: 19.0}
+```
 
 ### Question 7: Top #Nth longest P90 travel time Location for FHV
 
 Prerequisites:
 * Create a staging model for FHV Data (2019), and **DO NOT** add a deduplication step, just filter out the entries where `where dispatching_base_num is not null`
-* Create a core model for FHV Data (`dim_fhv_trips.sql`) joining with `dim_zones`. Similar to what has been done [here](../../../04-analytics-engineering/taxi_rides_ny/models/core/fact_trips.sql)
+* Create a core model for FHV Data (`dim_fhv_trips.sql`) joining with `dim_zones`. Similar to what has been done [here](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/04-analytics-engineering/taxi_rides_ny/models/core/fact_trips.sql)
 * Add some new dimensions `year` (e.g.: 2019) and `month` (e.g.: 1, 2, ..., 12), based on `pickup_datetime`, to the core model to facilitate filtering for your queries
 
 Now...
@@ -188,6 +256,48 @@ For the Trips that **respectively** started from `Newark Airport`, `SoHo`, and `
 - LaGuardia Airport, Rosedale, Bath Beach
 - LaGuardia Airport, Yorkville East, Greenpoint
 
+> Query
+
+```sql
+-- Newark Airport
+SELECT * FROM `dbt_jsmith.fct_fhv_monthly_zone_traveltime_p90`
+WHERE year = '2019'
+AND month = '11'
+AND pickup_zone = 'Newark Airport'
+ORDER BY p90 DESC
+-- SoHo
+SELECT * FROM `dbt_jsmith.fct_fhv_monthly_zone_traveltime_p90`
+WHERE year = '2019'
+AND month = '11'
+AND pickup_zone = 'SoHo'
+ORDER BY p90 DESC
+-- Yorkville East
+SELECT * FROM `dbt_jsmith.fct_fhv_monthly_zone_traveltime_p90`
+WHERE year = '2019'
+AND month = '11'
+AND pickup_zone = 'Yorkville East'
+ORDER BY p90 DESC
+```
+
+> Screenshot
+
+Newark Airport
+
+![Newark Airport](images/newark_airport.png)
+
+SoHo
+
+![SoHo](images/soho.png)
+
+Yorkville East
+
+![Yorkville East](images/yorkville_east.png)
+
+> Answer
+
+```
+LaGuardia Airport, Chinatown, Garment District
+```
 
 ## Submitting the solutions
 
