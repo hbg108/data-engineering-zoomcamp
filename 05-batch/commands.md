@@ -93,3 +93,16 @@ sudo apt-get install python3-testresources
 
 export PATH="/home/hbg/.local/bin:${PATH}"
 ```
+
+## 04_pyspark.ipynb
+
+```bash
+conda deactivate
+/usr/bin/python3 -m pip install pandas
+```
+
+<span style="color:red">AttributeError</span>: 'DataFrame' object has no attribute 'iteritems'
+
+```bash
+/usr/bin/python3 -m pip install -U pandas==1.5.3
+```

@@ -40,6 +40,15 @@ What is the average size of the Parquet (ending with .parquet extension) Files t
 - 75MB
 - 100MB
 
+> Screenshot
+
+![Parquet Size](images/parquet_size.png)
+
+> Answer
+
+```
+25MB
+```
 
 ## Question 3: Count records 
 
@@ -52,6 +61,19 @@ Consider only trips that started on the 15th of October.
 - 125,567
 - 145,567
 
+> Query
+
+```sql
+SELECT COUNT(1) 
+FROM yellow_2024_10 
+WHERE to_date(tpep_pickup_datetime) = '2024-10-15';
+```
+
+> Answer
+
+```
+
+```
 
 ## Question 4: Longest trip
 
@@ -62,6 +84,18 @@ What is the length of the longest trip in the dataset in hours?
 - 162
 - 182
 
+> Query
+
+```sql
+SELECT MAX((CAST(tpep_dropoff_datetime AS LONG) - CAST(tpep_pickup_datetime AS LONG)) / 3600) AS duration
+FROM yellow_2024_10;
+```
+
+> Answer
+
+```
+162
+```
 
 ## Question 5: User Interface
 
@@ -72,7 +106,11 @@ Spark’s User Interface which shows the application's dashboard runs on which l
 - 4040
 - 8080
 
+> Answer
 
+```
+4040
+```
 
 ## Question 6: Least frequent pickup location zone
 
@@ -89,6 +127,24 @@ Using the zone lookup data and the Yellow October 2024 data, what is the name of
 - Rikers Island
 - Jamaica Bay
 
+> Query
+
+```sql
+SELECT 
+zones.Zone AS pickup_location_zone, 
+COUNT(1)
+FROM yellow_2024_10 yellow 
+LEFT JOIN zones 
+ON yellow.PULocationID = zones.LocationID
+GROUP BY 1
+ORDER BY 2 ASC;
+```
+
+> Answer
+
+```
+Governor's Island/Ellis Island/Liberty Island
+```
 
 ## Submitting the solutions
 
