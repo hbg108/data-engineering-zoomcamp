@@ -194,11 +194,11 @@ Considering the YoY Growth in 2020, which were the yearly quarters with the best
 
 Green Taxi
 
-![green](images/green.png)
+![green](images/green_bigquery.png)
 
 Yellow Taxi
 
-![yellow](images/yellow.png)
+![yellow](images/yellow_bigquery.png)
 
 > Answer
 
