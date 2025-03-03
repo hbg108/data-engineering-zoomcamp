@@ -72,7 +72,7 @@ WHERE to_date(tpep_pickup_datetime) = '2024-10-15';
 > Answer
 
 ```
-
+125,567
 ```
 
 ## Question 4: Longest trip
