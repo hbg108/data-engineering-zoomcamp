@@ -72,6 +72,22 @@ Find out what you need to execute based on the `help` output.
 
 What's the version, based on the output of the command you executed? (copy the entire version)
 
+> Command
+
+```bash
+docker compose exec redpanda-1 rpk help
+docker compose exec redpanda-1 rpk version
+```
+
+> Screenshot
+
+![Redpanda Version](images/redpanda_version.png)
+
+> Answer
+
+```bash
+v24.2.18
+```
 
 ## Question 2. Creating a topic
 
@@ -84,6 +100,22 @@ Read the output of `help` and based on it, create a topic with name `green-trips
 
 What's the output of the command for creating a topic? Include the entire output in your answer.
 
+> Command
+
+```bash
+docker compose exec redpanda-1 rpk topic create green-trips
+```
+
+> Screenshot
+
+![Create Topic](images/create_topic.png)
+
+> Answer
+
+```bash
+TOPIC        STATUS
+green-trips  OK
+```
 
 ## Question 3. Connecting to the Kafka server
 
@@ -122,6 +154,16 @@ producer.bootstrap_connected()
 
 Provided that you can connect to the server, what's the output
 of the last command?
+
+> Screenshot
+
+![Connect Kafka Server](images/connect_kafka.png)
+
+> Answer
+
+```bash
+True
+```
 
 ## Question 4: Sending the Trip Data
 
@@ -167,6 +209,15 @@ took = t1 - t0
 
 How much time did it take to send the entire dataset and flush? 
 
+> Screenshot
+
+![Time Taken](images/time.png)
+
+> Answer
+
+```bash
+35.15s
+```
 
 ## Question 5: Build a Sessionization Window (2 points)
 
@@ -178,6 +229,25 @@ Now we have the data in the Kafka stream. It's time to process it.
 * Use `lpep_dropoff_datetime` time as your watermark with a 5 second tolerance
 * Which pickup and drop off locations have the longest unbroken streak of taxi trips?
 
+> Query
+
+```sql
+SELECT * FROM taxi_events
+ORDER BY num_of_trips DESC
+```
+
+> Screenshot
+
+![taxi_events](images/taxi_events.png)
+
+![dim_zones](images/dim_zones.png)
+
+> Answer
+
+```bash
+75, 74
+East Harlem North, East Harlem South
+```
 
 ## Submitting the solutions
 
