@@ -245,8 +245,8 @@ ORDER BY num_of_trips DESC
 > Answer
 
 ```bash
-75, 74
-East Harlem North, East Harlem South
+Pickup Location: 75, East Harlem South
+Dropoff Location: 74, East Harlem North
 ```
 
 ## Submitting the solutions
